@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load widget_tweaks %}
+<!-- {% load crispy_forms_tags %} -->
+
+{% block title %}Login to Dashboard{% endblock %}
+
+{% block content %}
+<!-- <div class="container mt-5 pt-5">
+    <div class="text-center mt-5 pt5">
+        <h4 class="mt-8">Admin User Login Portal</h4>    
+        <form method="post" class="col-md-6 mx-auto shadow ">
+            {% csrf_token %}
+            <div class="grid grid-cols-none">
+                <div class="form-group md-form">
+                    <span class='text-red-400'> {{ form.username.errors }} </span> 
+                    {% render_field form.username class="rounded w-full text-black-500 flex-none" placeholder=form.username.label %}                        
+                </div>
+                <div class="form-group md-form">
+                    <span class='text-red-400'>{{ form.password.errors }}</span> 
+                    {% render_field form.password class="rounded w-full text-black-500" placeholder=form.password.label %}                        
+                </div>
+            </div>
+            <span>Don't have an account? please <a href="{% url 'portal_account:register' %}">Register</a></span>
+            <button class="btn btn-filled btn-block my-4 waves-effect z-depth-0 singup-login-button" style="background-color: #E69E39" type="submit">Login</button>
+        </form>
+    </div>
+</div> -->
+{% endblock %}

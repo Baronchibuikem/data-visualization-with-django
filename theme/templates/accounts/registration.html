@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load widget_tweaks %}
+<!-- {% load crispy_forms_tags %} -->
+
+{% block title %}Create an account{% endblock %}
+
+{% block content %}
+<div class="container max-h-screen">
+    <div class="text-center">
+        <h4 class="mt-8">Admin User Registration Portal</h4>    
+        
+        <form method="post" class="col-md-6 mx-auto shadow">
+            {% csrf_token %}
+            <div class="grid grid-cols-none">
+                <div class="form-group md-form">
+                    <span class='text-red-400'> {{form.first_name.errors}} </span> 
+                    {% render_field form.first_name class="rounded w-full text-black-500" placeholder=form.first_name.label %}
+                </div>
+                <div class="form-group md-form">
+                    <span class='text-red-400'> {{form.last_name.errors}} </span> 
+                    {% render_field form.last_name class="rounded w-full text-black-500" placeholder=form.last_name.label %}                        
+                </div>
+                <div class="form-group md-form">
+                    <span class='text-red-400'> {{ form.email.errors }} </span> 
+                    {% render_field form.email class="rounded w-full text-black-500 flex-none" placeholder=form.email.label %}                        
+                </div>
+                <div class="form-group md-form">
+                    {% if form.phone_number.errors %}
+                        <span class='text-red-400'>Please ensure the phone number is correct and properly formatted eg. +23470...</span> 
+                    {% endif %}
+                    {% render_field form.phone_number class="rounded w-full text-black-500" placeholder=form.phone_number.label %}                        
+                </div>
+                <div class="form-group md-form">
+                    <span class='text-red-400'>{{ form.password.errors }}</span> 
+                    {% render_field form.password class="rounded w-full text-black-500" placeholder=form.password.label %}                        
+                </div>
+                <div class="form-group md-form">
+                    <span class='text-red-400'>{{ form.password.errors }}</span> 
+                    {% render_field form.confirm_password class="rounded w-full text-black-500" placeholder=form.confirm_password.label %}                        
+                </div>
+                <div class="form-group md-form">
+                    <span class='text-red-400'> {{ form.user_type.errors }} </span> 
+                    {% render_field form.user_type class="rounded w-full text-black-500" placeholder=form.user_type.label %}                        
+                </div>
+                <div class="form-group md-form">
+                    <span class='text-red-400'> {{ form.department.errors }} </span> 
+                    {% render_field form.department class="rounded w-full text-black-500" placeholder=form.department.label %}                        
+                </div>
+            </div>
+            <span>Already have an account? please <a href="{% url 'portal_account:login' %}">Login</a></span>
+            <button class="btn btn-filled btn-block my-4 waves-effect z-depth-0 singup-login-button" style="background-color: #E69E39" type="submit">Register</button>
+           
+        </form>
+    </div>
+</div>
+
+{% endblock %}

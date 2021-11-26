@@ -1,0 +1,35 @@
+version: "3.7"
+
+services:
+  web:
+    container_name: wordcloud
+    build: ./
+    command: gunicorn wordcloud.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - ./:/app/
+      - static_volume:/app/staticfiles/
+    expose:
+      - 8000
+    depends_on:
+      - wordcloud
+  wordcloud:
+    container_name: wordcloud_db
+    image: postgres:12.0-alpine
+    environment:
+      - POSTGRES_DB=wordcloud
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./wordcloud_data:/var/lib/postgresql/data/
+  nginx:
+    container_name: wordcloud_nginx
+    build: ./nginx
+    volumes:
+      - static_volume:/app/staticfiles/
+    ports:
+      - 8008:80
+    depends_on:
+      - web
+volumes:
+  database_data:
+  static_volume:
