@@ -1,22 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block content%}
+<div class="my-29 container mx-auto">
     <h1>Hi welcome to data visualization</h1>
     <form method="post" enctype="multipart/form-data" action="{{ form_action_url }}">
         {{DataForm}}
         {% csrf_token %}
         <button>Submit</button>
     </form>
-
     {% if columns %}
-        {{ columns }}
-
+        <div class="my-20">
+            <h1 class="text-center">Displaying the headers of your uploaded Documents</h1>
+            <table class="border-collapse border border-green-800 table-auto md:w-24 md:min-w-full sm:max-w-0 sm:w-auto">
+                <thead>
+                <tr>
+                    {% for col in columns %}
+                        <th class="border border-green-600 ...">
+                        {% for num in col %}
+                            {{ num }}
+                        {% endfor %}</th>
+                    {% endfor %}
+                </tr>
+                </thead> 
+            </table>
+        </div>
     {% endif %}
-</body>
-</html>
+</div>
+{% endblock content %}

@@ -6,6 +6,7 @@ django-tailwind==2.2.0
 gunicorn==20.0.4
 isort==4.3.21
 mypy==0.910
+openpyxl==3.0.9
 pandas
 psycopg2-binary==2.9.1
 pytest==6.2.5

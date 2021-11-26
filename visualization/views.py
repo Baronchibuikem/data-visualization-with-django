@@ -2,6 +2,7 @@ import io, csv, pandas as pd
 
 from typing import Any
 
+from django.conf import settings
 from django.shortcuts import render
 from django.http.request import HttpRequest
 from django.http.response import HttpResponse
@@ -13,8 +14,11 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView
 from django.views.generic.list import ListView
 
+from utils.file_utils import FileManager
 from visualization.forms import DataForm
 
+# instantiate classes
+file_manager = FileManager()
 # Read the data uploaded via csv or excel
 class IndexView(View):
     def get_context_data(self):
@@ -40,16 +44,24 @@ class DataVisualizationView(View):
         return render(request, 'visualization/data.html', context)
 
     def post(self, request: HttpRequest) -> HttpResponse:
-
         form = DataForm(request.POST, request.FILES)
         columns: list[str] = []
         context = self.get_context_data()
         if form.is_valid():
-            files = request.FILES['file']
-            reader = pd.read_csv(files)
-            for col in reader.columns:
-                columns.append(col)
-        print(len(columns), '<<<<<<printing columns>>>>')
+            user_file = request.FILES['file']
+            # check file type
+            file_type = file_manager.check_file_type(user_file)
+            if file_type in settings.DATA_FORMAT_FOR_INTERPRETATION:
+                read_file = file_manager.read_file_by_file_extension(user_file)
+                if read_file is not None:
+                    i = 0
+                    for col in read_file.columns:
+                        columns.append({col, i})
+                        i += 1
+                else:
+                    print('from view, file not supported')
+
+        else:
+            print(form.errors.values())
         context['columns'] = columns
-        # return HttpResponseRedirect(reverse('visualization:visual-home'))
         return render(request, 'visualization/data.html', context)
