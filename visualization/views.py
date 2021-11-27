@@ -1,8 +1,9 @@
-import io, csv, pandas as pd
-
+import logging
+import pandas as pd
 from typing import Any
 
 from django.conf import settings
+from django.contrib import messages
 from django.shortcuts import render
 from django.http.request import HttpRequest
 from django.http.response import HttpResponse
@@ -16,6 +17,9 @@ from django.views.generic.list import ListView
 
 from utils.file_utils import FileManager
 from visualization.forms import DataForm
+
+
+LOGGER = logging.getLogger(__name__)
 
 # instantiate classes
 file_manager = FileManager()
@@ -43,7 +47,47 @@ class DataVisualizationView(View):
         context = self.get_context_data()
         return render(request, 'visualization/data.html', context)
 
+    # def post(self, request: HttpRequest) -> HttpResponse:
+
+    #     form = DataForm(request.POST, request.FILES)
+    #     columns: list[str] = []
+    #     context = self.get_context_data()
+    #     if form.is_valid():
+    #         user_file = request.FILES['file']
+    #         # check file type
+    #         file_type = file_manager.check_file_type(user_file)
+    #         if file_type in settings.DATA_FORMAT_FOR_INTERPRETATION:
+    #             read_file = file_manager.read_file_by_file_extension(user_file)
+
+    #             if read_file is not None:
+    #                 i = 0
+    #                 for col in read_file:
+    #                     columns.append(col)
+    #                     i += 1
+    #                 messages.success(
+    #                     request,
+    #                     "File Uploaded Successfully",
+    #                 )
+    #             else:
+    #                 LOGGER.error(
+    #                     "visualization::views::DataVisualizationView::File type not suppoerted. ",
+    #                     exc_info=True,
+    #                 )
+    #     else:
+    #         messages.success(
+    #             request,
+    #             form.errors.values(),
+    #             extra_tags="alert alert-failure",
+    #         )
+    #         form = DataForm()
+    #     n = read_file.columns
+    #     print(n[0])
+    #     context['content'] = read_file.columns
+    #     context['columns'] = columns
+    #     return render(request, 'visualization/data.html', context)
+
     def post(self, request: HttpRequest) -> HttpResponse:
+
         form = DataForm(request.POST, request.FILES)
         columns: list[str] = []
         context = self.get_context_data()
@@ -54,14 +98,23 @@ class DataVisualizationView(View):
             if file_type in settings.DATA_FORMAT_FOR_INTERPRETATION:
                 read_file = file_manager.read_file_by_file_extension(user_file)
                 if read_file is not None:
-                    i = 0
-                    for col in read_file.columns:
-                        columns.append({col, i})
-                        i += 1
-                else:
-                    print('from view, file not supported')
+                    context['table'] = read_file.to_html(
+                        index=False,
+                        justify='center',
+                        classes='border-collapse border border-green-800 table-auto py-10 \n'
+                        'md:w-24 md:min-w-full sm:max-w-0 sm:w-auto border border-green-600 text-center',
+                    )
 
+                else:
+                    LOGGER.error(
+                        "visualization::views::DataVisualizationView::File type not suppoerted. ",
+                        exc_info=True,
+                    )
         else:
-            print(form.errors.values())
-        context['columns'] = columns
+            messages.success(
+                request,
+                form.errors.values(),
+                extra_tags="alert alert-failure",
+            )
+            form = DataForm()
         return render(request, 'visualization/data.html', context)
